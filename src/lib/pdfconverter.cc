@@ -843,7 +843,11 @@ void PdfConverterPrivate::spoolPage(int page) {
 	}
 	for (QHash<QString, QWebElement>::iterator i=pageAnchors[page+1].begin();
 		 i != pageAnchors[page+1].end(); ++i) {
-		QRectF r = webPrinter->elementLocation(i.value()).second;
+		QRectF r = webPrinter->elementLocation(i.value()
+#ifdef __EXTENSIVE_WKHTMLTOPDF_QT_HACK__
+											   , QWebPrinter::Top
+#endif
+											   ).second;
 		painter->addAnchor(r, i.key());
 	}
 	for (QVector< QPair<QWebElement,QString> >::iterator i=pageLocalLinks[page+1].begin();
@@ -910,7 +914,11 @@ void PdfConverterPrivate::beginPrintObject(PageObject & obj) {
 	//Sort anchors and links by page
 	for (QHash<QString, QWebElement>::iterator i=obj.anchors.begin();
 		 i != obj.anchors.end(); ++i)
-		pageAnchors[webPrinter->elementLocation(i.value()).first][i.key()] = i.value();
+		pageAnchors[webPrinter->elementLocation(i.value()
+#ifdef __EXTENSIVE_WKHTMLTOPDF_QT_HACK__
+												, QWebPrinter::Top
+#endif
+												).first][i.key()] = i.value();
 
 	for (QVector< QPair<QWebElement,QString> >::iterator i=obj.localLinks.begin();
 		 i != obj.localLinks.end(); ++i)

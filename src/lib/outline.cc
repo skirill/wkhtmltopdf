@@ -191,7 +191,11 @@ bool Outline::replaceWebPage(int document,
 							 QHash<QString, QWebElement> & anchors) {
 	QMap< QPair<int, QPair<qreal,qreal> >, QWebElement> headings;
 	foreach (const QWebElement & e, frame->findAllElements("h1,h2,h3,h4,h5,h6,h7,h8,h9")) {
-		QPair<int, QRectF> location = wp.elementLocation(e);
+		QPair<int, QRectF> location = wp.elementLocation(e
+#ifdef __EXTENSIVE_WKHTMLTOPDF_QT_HACK__
+														 , QWebPrinter::Top
+#endif
+														 );
 		headings[ qMakePair(location.first, qMakePair(location.second.y(), location.second.x()) ) ] = e;
 	}
 
